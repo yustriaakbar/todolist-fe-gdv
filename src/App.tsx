@@ -1,25 +1,16 @@
 import { useEffect, useState } from 'react';
+import './styles/todo.css';
 import { getTodos, createTodo, updateTodo } from './api/todoApi';
-import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
-import TodoDetail from './components/TodoDetail';
+import TodoForm from './components/TodoForm';
 
 function App() {
   const [todos, setTodos] = useState<any[]>([]);
-  const [selected, setSelected] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
 
   const loadTodos = async () => {
-    setLoading(true);
-    try {
-      const res = await getTodos();
-      setTodos(res.data);
-      setError('');
-    } catch (err) {
-      setError('Gagal load data todo');
-    }
-    setLoading(false);
+    const res = await getTodos(search);
+    setTodos(res.data);
   };
 
   useEffect(() => {
@@ -27,29 +18,38 @@ function App() {
   }, []);
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Todo App</h2>
+    <div className="todo-card">
+      <div className="todo-header">Todo List</div>
 
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <div className="todo-body">
+        <div className="search-box">
+          <input
+            placeholder="Search todo"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <button onClick={loadTodos}>🔍</button>
+        </div>
 
-      <TodoForm
-        onAdd={async (title: string) => {
-          await createTodo(title);
-          loadTodos();
-        }}
-      />
+        <TodoList
+          todos={todos}
+          onToggle={async (todo: any) => {
+            await updateTodo(todo.id, {
+              status: todo.status === 'completed' ? 'created' : 'completed',
+            });
+            loadTodos();
+          }}
+        />
 
-      <TodoList
-        todos={todos}
-        onSelect={setSelected}
-        onUpdate={async (id: number, payload: any) => {
-          await updateTodo(id, payload);
-          loadTodos();
-        }}
-      />
+        {/* <button className="clear-btn">Clear All</button> */}
 
-      <TodoDetail todo={selected} />
+        <TodoForm
+          onAdd={async (title: string) => {
+            await createTodo(title);
+            loadTodos();
+          }}
+        />
+      </div>
     </div>
   );
 }

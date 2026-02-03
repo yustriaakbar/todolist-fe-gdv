@@ -7,7 +7,10 @@ const api = axios.create({
   },
 });
 
-export const getTodos = () => api.get('/todos');
+export const getTodos = (search = '') =>
+  api.get('/todos', {
+    params: { search },
+  });
 
 export const createTodo = (title: string) =>
   api.post('/todos', { title });

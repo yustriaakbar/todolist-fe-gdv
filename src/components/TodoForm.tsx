@@ -4,11 +4,11 @@ export default function TodoForm({ onAdd }: any) {
   const [title, setTitle] = useState('');
 
   return (
-    <div style={{ marginBottom: 16 }}>
+    <div className="add-box">
       <input
+        placeholder="Add new todo it"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder="Todo title"
       />
       <button
         onClick={() => {
@@ -17,7 +17,7 @@ export default function TodoForm({ onAdd }: any) {
           setTitle('');
         }}
       >
-        Add
+        + Add
       </button>
     </div>
   );
